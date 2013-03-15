@@ -3,14 +3,12 @@
             [game.components :as comp]
             [game.systems :as sys])
   (:use [game.systems.graphics :only [graphics-system]]
-        [game.systems.quanta :only [quanta-creation-system]]
         [game.systems.physics :only [physics-system]]))
 
 ;; Have to have this be global so it's in scope of callbacks.
 (def entities (atom {:best-guy [(comp/position -1100 0 0)
                                 (comp/velocity 10 0 0)]}))
 (def systems [(graphics-system)
-              (quanta-creation-system)
               (physics-system)])
 
 (def last-tick (atom 0))

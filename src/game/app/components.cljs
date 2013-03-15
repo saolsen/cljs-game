@@ -13,3 +13,10 @@
    the current velocity"
   [fx fy fz]
   {:fx fx :fy fy :fz fz :type :acceleration})
+
+(defn renderable
+  "setup must return a threejs object ;;TODO multiple ones
+   that can be added to the scene
+   update must be a function of that object and the entity"
+  [setup update]
+  {:setup setup :update update :type :renderable})

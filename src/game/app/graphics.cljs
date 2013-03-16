@@ -9,7 +9,7 @@
                             :side js/THREE.DoubleSide}))
         geom (js/THREE.PlaneGeometry. 1000 1000)
         floor (js/THREE.Mesh. geom material)]
-    (aset (.-position floor) "y" -0.5)
+    ;(aset (.-position floor) "y" 0)
     (aset (.-rotation floor) "x" (/ js/Math.PI 2))
     floor))
 

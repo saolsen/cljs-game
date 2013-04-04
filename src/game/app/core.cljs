@@ -3,15 +3,21 @@
             [game.components :as comp]
             [game.systems :as sys])
   (:use [game.systems.graphics :only [graphics-system]]
+        [game.systems.player :only [player-system]]
         [game.systems.scene :only [test-scene-system]]
-        [game.systems.physics :only [physics-system]]))
+        [game.systems.physics :only [physics-system]]
+        [game.systems.stuff :only [stuff-system]]))
 
 ;; Have to have this be global so it's in scope of callbacks.
 (def entities (atom {}))
-(def systems [(graphics-system)
+(def systems [(player-system)
               (test-scene-system)
-              (physics-system)])
+              (physics-system)
+              (graphics-system)
+              (stuff-system)
+              ])
 
+;; TODO: Get out of global scope.
 (def last-tick (atom 0))
 (defn animation-loop [t]
   (.webkitRequestAnimationFrame js/window animation-loop)

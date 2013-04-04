@@ -20,3 +20,13 @@
    update must be a function of that object and the entity"
   [setup update]
   {:setup setup :update update :type :renderable})
+
+(defn player
+  "entitiy that represents the player"
+  []
+  {:type :player})
+
+(defn camera
+  "Coordinates for the camera. Vectors for where it's looking and it's position"
+  [lookat pos]
+  {:type :camera :lookat lookat :position pos})

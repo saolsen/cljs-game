@@ -1,6 +1,15 @@
 ;; Uses threejs
 (ns game.graphics)
 
+(defn cube
+  []
+  (let [material (js/THREE.MeshBasicMaterial.
+                  (clj->js {:color 0}))
+        geom (js/THREE.CubeGeometry. 10 10 10)
+        cube (js/THREE.Mesh. geom material)]
+    (aset (.-position cube) "y" 150)
+    cube))
+
 (defn setup-floor
   "creates a floor"
   []
@@ -26,14 +35,26 @@
         scene (js/THREE.Scene.)
         renderer (js/THREE.WebGLRenderer. (clj->js {:antialias true}))
         camera (js/THREE.PerspectiveCamera. view-angle aspect near far)
-        container (.createElement js/document "div")]
+        container (.createElement js/document "div")
+        stats (js/Stats.)
+        style (.-style (.-domElement stats))
+        controls (THREE.PointerLockControls. camera)]
     (.add scene camera)
+    (.add scene (.getObject controls))
+    (aset controls "enabled" true)
     (.set (.-position camera)  0 150 400)
     (.lookAt camera (.-position scene))
     (.setSize renderer screen-width screen-height)
     (.appendChild js/document.body container)
     (.appendChild container (.-domElement renderer))
     (.WindowResize js/THREEx renderer camera)
+    (.setMode stats 0)
+    (aset style "position" "absolute")
+    (aset style "left" "0px")
+    (aset style "top" "0px")
+    (.appendChild js/document.body (.-domElement stats))
     {:camera camera
      :scene scene
-     :renderer renderer}))
+     :renderer renderer
+     :stats stats
+     :controls controls}))

@@ -28,5 +28,7 @@
 
 (defn camera
   "Coordinates for the camera. Vectors for where it's looking and it's position"
-  [lookat pos]
-  {:type :camera :lookat lookat :position pos})
+  [pitch-object yaw-object]
+  {:type :camera
+   :pitch-object pitch-object
+   :yaw-object yaw-object})

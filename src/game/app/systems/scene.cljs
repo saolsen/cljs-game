@@ -12,7 +12,7 @@
   (run [_ globals ents]
     (when-not @added?
       (reset! added? true)
-
+      
       ;; Sets up an entity for the floor
       (let [floor (graphics/setup-floor)]
         {(ent/gen-id) [(comp/renderable (constantly floor) first)]})))

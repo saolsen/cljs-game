@@ -1,7 +1,9 @@
 (ns game.systems.graphics
   (:require [game.entities :as entities]
+            [game.components :as components]
             [game.graphics :as graphics])
-  (:use [game.systems :only [PSystem]]))
+  (:use [game.systems :only [PSystem]]
+        [game.utils :only [log]]))
 
 (defn update-item
   "updates the key in objs with the result of (f oldval entity)"
@@ -9,50 +11,57 @@
   (let [old (get key objs)]
     (assoc objs key (f old entity))))
 
-(defrecord GraphicsSystem [camera scene renderer stats objs]
+;; This and the PlayerSystem are both big and coupled. Not sure if I
+;; can fix that though.
+(defrecord GraphicsSystem [camera scene renderer stats player-setup? objs]
   PSystem
   (components [_] #{:renderable})
   (setup [_]
     nil)
   (run [_ globals ents]
+    (let [return (atom {})]
+
+      ;; Process each entitiy.
       (doseq [e ents]
         (let [key (first e)
               comps (second e)
               {:keys [setup update]}
               (entities/get-component comps :renderable)]
 
-          ;; Update the camera (if this is the player)
-          (let [zpos (.-z (.-position camera))]
-            (aset (.-position camera) "z" (- zpos 1)))
+          ;; Some special case stuff for the player.
+          ;; Set up the camera objects.
+          (when-not @player-setup?
+            (when (entities/get-component comps :player)
+              (log "adding camera to player")
+              (let [cam (graphics/camera-objects camera)]
+                (.add scene (:yaw-object cam))
+                (swap! return
+                       assoc
+                       key
+                       (conj comps (components/camera
+                                    (:pitch-object cam)
+                                    (:yaw-object cam)))))
+              (reset! player-setup? true)))
 
-          ;; this be broke! ;;
-
-          ;; (when-let [cam (entities/get-component comps :camera)]
-          ;;   (.log js/console "dat cam")
-          ;;   (.log js/console camera)
-          ;;   (.log js/console (clj->js cam))
-          ;;   (apply .set (.-position camera) (:pos cam))
-          ;;   (apply .lookAt camera (:lookat cam))
-          ;;   )
-
-          ;; What if we just try rotating the camera or something a
-          ;; bit each frame?
-
-          ;; Add threejs object if it isn't in our objs map
+          ;; Add renderable threejs objects if they aren't in our map.
           (when-not (contains? @objs key)
             (let [new (setup)]
               (.add scene new)
               (swap! objs assoc key new)))
 
-          ;; Update threejs object with the update function.
-          (swap! objs update-item key e update)))
+              ;; Update threejs object with the update function.
+              (swap! objs update-item key e update)))
 
-    ;; update the screen
-    (.update stats)
-    (.render renderer scene camera)))
+      ;; update the screen
+      (.update stats)
+      (.render renderer scene camera)
+
+      ;; return any updated entities
+      @return))
+  )
 
 (defn graphics-system
   []
-  (map->GraphicsSystem (assoc (graphics/setup-threejs) :objs (atom {}))))
-
-;; So, if we had our way we'd have the camera system return pure coordinates on
+  (map->GraphicsSystem (assoc (graphics/setup-threejs)
+                         :player-setup? (atom false)
+                         :objs (atom {}))))

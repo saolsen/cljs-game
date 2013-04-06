@@ -49,15 +49,7 @@
         camera (js/THREE.PerspectiveCamera. view-angle aspect near far)
         container (.createElement js/document "div")
         stats (js/Stats.)
-        style (.-style (.-domElement stats))
-        ;; these work perfectly!
-        ;controls (js/THREE.PointerLockControls. camera)
-        ]
-    ;(.add scene (.getObject controls))
-    ;(aset controls "enabled" true)
-    ;(.add scene camera) ;Add the pitch object instead.
-    ;(.set (.-position camera)  0 150 400)
-    ;(.lookAt camera (.-position scene))
+        style (.-style (.-domElement stats))]
     (.setSize renderer screen-width screen-height)
     (.appendChild js/document.body container)
     (.appendChild container (.-domElement renderer))

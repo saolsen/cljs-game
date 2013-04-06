@@ -32,7 +32,6 @@
           ;; Set up the camera objects.
           (when-not @player-setup?
             (when (entities/get-component comps :player)
-              (log "adding camera to player")
               (let [cam (graphics/camera-objects camera)]
                 (.add scene (:yaw-object cam))
                 (swap! return

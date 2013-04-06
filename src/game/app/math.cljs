@@ -9,3 +9,6 @@
   "Random integer between begin and end"
   [min max]
   (+ (js/Math.floor (* (random) (+ (- max min) 1))) min))
+
+(def PI js/Math.PI)
+(def PI-2 (/ PI 2))

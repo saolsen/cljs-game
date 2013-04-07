@@ -140,8 +140,6 @@
         ;; them.
         (let [down @keys-down
               pressed @keys-pressed]
-          (when (seq pressed)
-            (log (clj->js pressed)))
           (reset! keys-pressed [])
           {key (conj (ent/remove-component comps :keypresses)
                      (comp/keypresses down pressed))})
@@ -151,8 +149,33 @@
                                           (atom [])
                                           (atom #{})))
 
+;; Not sure the best way to do this, nothing on the physics system is
+;; built in, this just moves the camera object for now.
+(defrecord PlayerMovementSystem []
+  PSystem
+  (components [_] #{:keypresses :camera})
+  (setup [_] nil)
+  (run [_ globals ents]
+    (when (seq ents)
+      (let [[key comps] (first ents)
+            keypresses (ent/get-component comps :keypresses)
+            keys-down (:down keypresses)
+            camera (ent/get-component comps :camera)
+            yaw-object (:yaw-object camera)
+            delta (:delta globals)
 
+            player-speed 10]
+        
+        (when (contains? keys-down :w)
+          (.translateZ yaw-object (* delta (- player-speed))))
+        (when (contains? keys-down :s)
+          (.translateZ yaw-object (* delta player-speed)))
+        (when (contains? keys-down :a)
+          (.translateX yaw-object (* delta (- player-speed))))
+        (when (contains? keys-down :d)
+          (.translateX yaw-object (* delta player-speed)))
+        ))
+    )
+  )
 
-
-
-            
+(defn player-movement-system [] (PlayerMovementSystem.))

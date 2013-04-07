@@ -5,44 +5,54 @@
   (:use [game.systems.graphics :only [graphics-system]]
         [game.systems.player :only [player-system
                                     camera-system
-                                    controls-system]]
+                                    controls-system
+                                    player-movement-system]]
         [game.systems.scene :only [test-scene-system]]
         [game.systems.physics :only [physics-system]]
         [game.systems.stuff :only [stuff-system]]))
 
-;; Have to have this be global so it's in scope of callbacks.
-(def entities (atom {}))
-(def systems [(player-system)
-              (camera-system)
-              (controls-system)
-              (test-scene-system)
-              (physics-system)
-              (graphics-system)
-              (stuff-system)])
+(defprotocol PApp
+  (start [this] "starts the app")
+  (stop [this] "stops the app"))
 
-;; TODO: Get out of global scope.
-(def last-tick (atom 0))
-(defn animation-loop [t]
-  (.webkitRequestAnimationFrame js/window animation-loop)
-  (let [time-delta (/ (- t @last-tick) 1000)
-        globals {:delta time-delta :now t}]
-    (reset! last-tick t)
+(declare animation-loop)
 
-    ;; call all systems with relevant data.
-    (doseq [s systems]
-      (let [needed-components (sys/components s)
-            needed-entities
-            (ent/get-with-components @entities needed-components)
-            changed (sys/run s globals needed-entities)]
-        (swap! entities ent/change-entities changed)))))
+(defrecord App [entities systems last-tick]
+  PApp
+  (start [_]
+    ;; Has to be top level for the animation callback
+    (defn animation-loop [t]
+      (.webkitRequestAnimationFrame js/window animation-loop)
+      (let [time-delta (/ (- t @last-tick) 1000)
+            globals {:delta time-delta :now t}]
+        (reset! last-tick t)
 
-(defn main []
-  ;; setup systems
-  (doseq [s systems]
-    (sys/setup s))
+        ;; call all systems with relevant data.
+        (doseq [s systems]
+          (let [needed-components (sys/components s)
+                needed-entities
+                (ent/get-with-components @entities needed-components)
+                changed (sys/run s globals needed-entities)]
+            (swap! entities ent/change-entities changed)))))
 
-  ;; main loop
-  (let [start-time (.now js/Date)]
-    (animation-loop start-time)))
+      ;; setup systems
+      (doseq [s systems]
+        (sys/setup s))
+      
+      ;; main loop
+      (let [start-time (.now js/Date)]
+        (animation-loop start-time)))
+  )
 
-(main)
+(defn create-app [] (App. (atom {})
+                          [(player-system)
+                           (camera-system)
+                           (controls-system)
+                           (player-movement-system)
+                           (test-scene-system)
+                           (physics-system)
+                           (graphics-system)
+                           (stuff-system)]
+                          (atom 0)))
+
+(start (create-app))

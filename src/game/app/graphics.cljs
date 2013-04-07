@@ -70,7 +70,7 @@
   "creates a floor"
   []
   (let [material (js/THREE.MeshBasicMaterial.
-                  (clj->js {:color 0
+                  (clj->js {:color 12632256 ;grey
                             ;:wireframe true
                             :side js/THREE.DoubleSide}))
         geom (js/THREE.PlaneGeometry. 1000 1000 100 100)

@@ -164,7 +164,7 @@
             yaw-object (:yaw-object camera)
             delta (:delta globals)
 
-            player-speed 10]
+            player-speed 75]
         
         (when (contains? keys-down :w)
           (.translateZ yaw-object (* delta (- player-speed))))

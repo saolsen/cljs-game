@@ -14,7 +14,14 @@
 
     (when-not @setup?
       (reset! setup? true)
-      {(ent/gen-id) [(comp/renderable graphics/cube
+
+      ;; make a cube
+      ;; {(ent/gen-id) [(comp/renderable graphics/cube
+      ;;                                 (fn [old ent] old))
+      ;;                (comp/position 0 0 0)]})
+
+      ;; make nate's tree!
+      {(ent/gen-id) [(comp/renderable graphics/tree
                                       (fn [old ent] old))
                      (comp/position 0 0 0)]})
 

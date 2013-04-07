@@ -16,6 +16,7 @@
   [components]
   (set (map :type components)))
 
+;; TODO: performance bottleneck, gonna need to be a map of components.
 (defn get-with-components
   "gets the entities with all the needed components"
   [entity-map components]

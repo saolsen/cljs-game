@@ -8,7 +8,7 @@
                   (clj->js {:color 0}))
         geom (js/THREE.CubeGeometry. 10 10 10)
         cube (js/THREE.Mesh. geom material)]
-    (aset (.-position cube) "y" 5)
+    (aset (.-position cube) "y" 250)
     cube))
 
 (defn tree

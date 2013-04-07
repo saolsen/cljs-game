@@ -4,6 +4,7 @@
             [game.systems :as sys])
   (:use [game.systems.graphics :only [graphics-system]]
         [game.systems.player :only [player-system
+                                    camera-system
                                     controls-system]]
         [game.systems.scene :only [test-scene-system]]
         [game.systems.physics :only [physics-system]]
@@ -12,6 +13,7 @@
 ;; Have to have this be global so it's in scope of callbacks.
 (def entities (atom {}))
 (def systems [(player-system)
+              (camera-system)
               (controls-system)
               (test-scene-system)
               (physics-system)

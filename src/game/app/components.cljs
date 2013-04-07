@@ -32,3 +32,10 @@
   {:type :camera
    :pitch-object pitch-object
    :yaw-object yaw-object})
+
+(defn keypresses
+  "Keys pressed"
+  [down presses]
+  {:type :keypresses
+   :down down
+   :pressed presses})

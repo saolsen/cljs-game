@@ -20,7 +20,7 @@
         {(ent/gen-id) [(comp/player)
                        (comp/position)
                        (comp/velocity)
-
+                       (comp/keypresses #{} [])
                        ;; Not sure what to render but need this component
                        ;; so that the graphics sytem gets this entity.
                        (comp/renderable (constantly nil)
@@ -29,7 +29,6 @@
   )
 
 (defn player-system [] (PlayerSystem. (atom false)))
-
 
 ;; Controls stuff
 (defn on-mouse-move
@@ -66,10 +65,10 @@
     (.webkitRequestPointerLock canvas)))
 
 ;; Deals with player controls and movement.
-(defrecord ControlsSystem [setup? enabled?]
+(defrecord CameraSystem [setup? enabled?]
   PSystem
   (components [_] #{:camera})
-  (setup [_] )
+  (setup [_] nil)
   (run [_ globals ents]
     (let [[key comps] (first ents)]
       (when-let [cam (ent/get-component comps :camera)]
@@ -94,4 +93,66 @@
         )))
   )
 
-(defn controls-system [] (ControlsSystem. (atom false) (atom false)))
+(defn camera-system [] (CameraSystem. (atom false) (atom false)))
+
+(def keymap
+  {38 :up
+   37 :left
+   40 :down
+   39 :right
+   87 :w
+   65 :a
+   83 :s
+   68 :d
+   32 :space})
+
+(defn on-key-down
+  "key press handler"
+  [keys-pressed keys-down event]
+  (let [keycode (.-keyCode event)]
+    (swap! keys-down conj (get keymap keycode))
+    (swap! keys-pressed conj (get keymap keycode))))
+
+(defn on-key-up
+  "second half"
+  [keys-down event]
+  (let [keycode (.-keyCode event)]
+    (swap! keys-down disj (get keymap keycode))))
+
+(defrecord ControlsSystem [setup? keys-pressed keys-down]
+  PSystem
+  (components [_] #{:keypresses})
+  (setup [_] nil)
+  (run [_ globals ents]
+    (let [[key comps] (first ents)]
+      (when-let [cam (ent/get-component comps :keypresses)]
+        ;; Set up
+        (when-not @setup?
+          (.addEventListener js/document "keydown"
+                             (partial on-key-down keys-pressed keys-down)
+                             false)
+          (.addEventListener js/document "keyup"
+                             (partial on-key-up keys-down))          
+          (reset! setup? true))
+
+        ;; Each step, set the keys that were pressed (and are down)
+        ;; for this frame on the component so other systems can use
+        ;; them.
+        (let [down @keys-down
+              pressed @keys-pressed]
+          (when (seq pressed)
+            (log (clj->js pressed)))
+          (reset! keys-pressed [])
+          {key (conj (ent/remove-component comps :keypresses)
+                     (comp/keypresses down pressed))})
+        ))))
+
+(defn controls-system [] (ControlsSystem. (atom false)
+                                          (atom [])
+                                          (atom #{})))
+
+
+
+
+
+            

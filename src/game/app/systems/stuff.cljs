@@ -21,8 +21,9 @@
       ;;                (comp/position 0 0 0)]})
 
       ;; make nate's tree!
-      {(ent/gen-id) [(comp/renderable graphics/tree
-                                      (fn [old ent] old))
+      {(ent/gen-id) [(comp/renderable
+                      graphics/tree
+                      (fn [old ent] old))
                      (comp/position 0 0 0)]})
 
       )

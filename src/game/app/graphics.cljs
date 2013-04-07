@@ -12,16 +12,66 @@
     cube))
 
 (defn tree
-  "makes a tree"
-  []
-  (cube))
+  "makes a tree like nate designed
+   to start I'm going to try and exactly replicate what nate had.
+   It's 4 spheres, connected with cylinders to a trunk which is
+   another cylinder.
+   wow, this is much harder than I expected it would be.
+  "
+  ([spacing leaf-height trunk-height leaf-size]
+     (let [sphere-material (js/THREE.MeshBasicMaterial.
+                            (clj->js {:color 26163 ;greenish
+                                      ;:wireframe true
+                                      })) 
+           sphere-geometry (js/THREE.SphereGeometry. leaf-size
+                                                     leaf-size
+                                                     leaf-size)
+           tree-material (js/THREE.MeshBasicMaterial.
+                              (clj->js {:color 7086848 ;brown
+                                        ;:wireframe true
+                                        }))
+           trunk-radius (/ spacing 5)
+           trunk-geometry (js/THREE.CylinderGeometry. trunk-radius
+                                                      trunk-radius
+                                                      trunk-height
+                                                      20
+                                                      false)
+           branch-geometry (js/THREE.CylinderGeometry. 5
+                                                       5
+                                                       40
+                                                       12
+                                                       false)
+           trunk (js/THREE.Mesh. trunk-geometry tree-material)
+           container (js/THREE.Object3D.)
+           s (/ spacing 2)
+           branch-height (+ trunk-height
+                            (/ (- leaf-height trunk-height) 2))]
+       (.applyMatrix branch-geometry
+                     (.makeRotationX (js/THREE.Matrix4.)
+                                     (/ js/Math.PI 2)))
+       (doseq [[x z] [[(- s) (- s)] [(- s) s] [s (- s)] [s s]]]
+         (let [new-sphere (js/THREE.Mesh. sphere-geometry sphere-material)
+               branch (js/THREE.Mesh. branch-geometry tree-material)]
+           (aset (.-position branch) "y" branch-height)
+           (aset (.-position branch) "x" (/ x 2))
+           (aset (.-position branch) "z" (/ z 2))
+           (aset (.-position new-sphere) "x" x)
+           (aset (.-position new-sphere) "z" z)
+           (aset (.-position new-sphere) "y" leaf-height)
+           (.lookAt branch (.-position new-sphere))
+           (.add container new-sphere)
+           (.add container branch)))
+       (aset (.-position trunk) "y" (/ trunk-height 2))
+       (.add container trunk)
+       container))
+  ([] (tree 60 80 60 25)))
 
 (defn setup-floor
   "creates a floor"
   []
   (let [material (js/THREE.MeshBasicMaterial.
-                  (clj->js {:color 13369344
-                            :wireframe true
+                  (clj->js {:color 0
+                            ;:wireframe true
                             :side js/THREE.DoubleSide}))
         geom (js/THREE.PlaneGeometry. 1000 1000 100 100)
         floor (js/THREE.Mesh. geom material)]

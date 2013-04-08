@@ -15,7 +15,6 @@
    to start I'm going to try and exactly replicate what nate had.
    It's 4 spheres, connected with cylinders to a trunk which is
    another cylinder.
-   wow, this is much harder than I expected it would be.
   "
   ([spacing leaf-height trunk-height leaf-size]
      (let [sphere-material (js/THREE.MeshBasicMaterial.

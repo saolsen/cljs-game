@@ -5,12 +5,6 @@
   (:use [game.systems :only [PSystem]]
         [game.utils :only [log]]))
 
-(defn update-item
-  "updates the key in objs with the result of (f oldval entity)"
-  [objs key entity f]
-  (let [old (get key objs)]
-    (assoc objs key (f old entity))))
-
 ;; This and the PlayerSystem are both big and coupled. Not sure if I
 ;; can fix that though.
 (defrecord GraphicsSystem [camera scene renderer stats player-setup? objs]

@@ -19,21 +19,34 @@
       ;; {(ent/gen-id) [(comp/renderable graphics/cube
       ;;                                 (fn [old ent] old))
       ;;                (comp/position 0 0 0)]})
-
-      ;; make nate's tree!
-       (hash-map 
+      
+      (hash-map
+       ;; a few of nate's trees
        (ent/gen-id) [(comp/renderable
-                      graphics/tree
+                      (partial graphics/tree 200 150 200 75)
                       (fn [old ent] old))
-                     (comp/position 0 0 0)]
+                     (comp/position 500 0 0)]
+       (ent/gen-id) [(comp/renderable
+                      (partial graphics/tree 60 80 60 25)
+                      (fn [old ent] old))
+                     (comp/position (- 500) 0 0)]
+       ;now
+       (ent/gen-id) [(comp/renderable
+                      (partial graphics/tree 80 120 100 30)
+                      (fn [old ent] old))
+                     (comp/position 0 0 500)]
+       (ent/gen-id) [(comp/renderable
+                      (partial graphics/tree 30 35 25 10)
+                      (fn [old ent] old))
+                     (comp/position 0 0 (- 500))]
        ;; antisun
        (ent/gen-id) [(comp/renderable
-                      graphics/cube
+                      (partial graphics/cube)
                       (fn [old ent] old))
-                     (comp/position 0 150 0)]
+                     (comp/position 0 250 0)]
        ))
 
-      )
     )
+  )
 
 (defn stuff-system [] (StuffSystem. (atom false)))

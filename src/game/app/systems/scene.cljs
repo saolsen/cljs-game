@@ -15,7 +15,8 @@
       
       ;; Sets up an entity for the floor
       (let [floor (graphics/setup-floor)]
-        {(ent/gen-id) [(comp/renderable (constantly floor) first)]})))
+        {(ent/gen-id) [(comp/renderable (constantly floor) (fn [o e] o))
+                       (comp/position 0 0 0)]})))
   )
 
 (defn test-scene-system [] (SceneSystem. (atom false)))

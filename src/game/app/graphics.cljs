@@ -8,7 +8,6 @@
                   (clj->js {:color 0}))
         geom (js/THREE.CubeGeometry. 10 10 10)
         cube (js/THREE.Mesh. geom material)]
-    (aset (.-position cube) "y" 250)
     cube))
 
 (defn tree
@@ -38,7 +37,7 @@
                                                       false)
            branch-geometry (js/THREE.CylinderGeometry. 5
                                                        5
-                                                       40
+                                                       (* (/ spacing 3) 2)
                                                        12
                                                        false)
            trunk (js/THREE.Mesh. trunk-geometry tree-material)
@@ -73,7 +72,7 @@
                   (clj->js {:color 12632256 ;grey
                             ;:wireframe true
                             :side js/THREE.DoubleSide}))
-        geom (js/THREE.PlaneGeometry. 1000 1000 100 100)
+        geom (js/THREE.PlaneGeometry. 5000 5000 500 500)
         floor (js/THREE.Mesh. geom material)]
     ;(aset (.-position floor) "y" 0)
     (aset (.-rotation floor) "x" (/ js/Math.PI 2))
@@ -99,7 +98,7 @@
         view-angle 75
         aspect (/ screen-width screen-height)
         near 1
-        far 500
+        far 2000
         scene (js/THREE.Scene.)
         renderer (js/THREE.WebGLRenderer. (clj->js {:antialias true}))
         camera (js/THREE.PerspectiveCamera. view-angle aspect near far)

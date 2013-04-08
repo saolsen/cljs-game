@@ -15,7 +15,7 @@
 ;; can fix that though.
 (defrecord GraphicsSystem [camera scene renderer stats player-setup? objs]
   PSystem
-  (components [_] #{:renderable})
+  (components [_] #{:renderable :position})
   (setup [_]
     nil)
   (run [_ globals ents]
@@ -43,13 +43,34 @@
               (reset! player-setup? true)))
 
           ;; Add renderable threejs objects if they aren't in our map.
-          (when-not (contains? @objs key)
+          (when-not (aget objs key)
             (let [new (setup)]
               (.add scene new)
-              (swap! objs assoc key new)))
+              (aset objs key new)))
 
-              ;; Update threejs object with the update function.
-              (swap! objs update-item key e update)))
+          ;; Update threejs object with the update function.
+          (let [oldval (aget objs key)
+                newval (update oldval e)]
+            (aset objs key newval))
+
+          ;; Update positions
+          ;(.log js/console (clj->js @objs))
+          (when-let [obj (aget objs key)]
+            (.log js/console obj)
+            (let [old-pos (.-position obj)
+                  oldx (.-x old-pos)
+                  oldy (.-y old-pos)
+                  oldz (.-z old-pos)
+                  position (entities/get-component comps :position)
+                  newx (:x position)
+                  newy (:y position)
+                  newz (:z position)]
+              (when-not (and (= oldx newx)
+                             (= oldy newy)
+                             (= oldz newz))
+                (.set old-pos newx newy newz))))
+
+            ))
 
       ;; update the screen
       (.update stats)
@@ -63,4 +84,4 @@
   []
   (map->GraphicsSystem (assoc (graphics/setup-threejs)
                          :player-setup? (atom false)
-                         :objs (atom {}))))
+                         :objs (clj->js {}))))

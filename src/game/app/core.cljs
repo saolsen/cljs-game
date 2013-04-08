@@ -55,4 +55,6 @@
                            (stuff-system)]
                           (atom 0)))
 
-(start (create-app))
+;; def it so you can dig in from the console
+(def app (create-app))
+(start app)

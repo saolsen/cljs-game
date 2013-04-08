@@ -18,14 +18,13 @@
       (let [cam-objects (graphics/camera-objects)]
         ;; base player entity, a camera gets added by the graphics system
         {(ent/gen-id) [(comp/player)
-                       (comp/position)
+                       (comp/position 0 0 0)
                        (comp/velocity)
                        (comp/keypresses #{} [])
                        ;; Not sure what to render but need this component
                        ;; so that the graphics sytem gets this entity.
                        (comp/renderable (constantly nil)
-                                        (fn [a b] a))]}))    
-    )
+                                        (fn [a b] a))]})))
   )
 
 (defn player-system [] (PlayerSystem. (atom false)))
@@ -165,7 +164,7 @@
             delta (:delta globals)
 
             player-speed 75]
-        
+        ;;TODO: I need this to update the players position too
         (when (contains? keys-down :w)
           (.translateZ yaw-object (* delta (- player-speed))))
         (when (contains? keys-down :s)

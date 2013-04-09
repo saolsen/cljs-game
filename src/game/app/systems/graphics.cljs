@@ -48,9 +48,7 @@
             (aset objs key newval))
 
           ;; Update positions
-          ;(.log js/console (clj->js @objs))
           (when-let [obj (aget objs key)]
-            (.log js/console obj)
             (let [old-pos (.-position obj)
                   oldx (.-x old-pos)
                   oldy (.-y old-pos)
@@ -63,8 +61,8 @@
                              (= oldy newy)
                              (= oldz newz))
                 (.set old-pos newx newy newz))))
-
-            ))
+          
+          ))
 
       ;; update the screen
       (.update stats)

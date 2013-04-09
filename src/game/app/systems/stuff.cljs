@@ -39,13 +39,19 @@
                       (partial graphics/tree 30 35 25 10)
                       (fn [old ent] old))
                      (comp/position 0 0 (- 500))]
+
+       ;; ;;shitty tree
+       ;; (ent/gen-id) [(comp/renderable
+       ;;                (partial graphics/tree 500 200 600 50)
+       ;;                (fn [old ent] old))
+       ;;               (comp/position 0 0 0)]
+       
        ;; antisun
        (ent/gen-id) [(comp/renderable
-                      (partial graphics/cube)
+                      graphics/cube
                       (fn [old ent] old))
                      (comp/position 0 250 0)]
        ))
-
     )
   )
 

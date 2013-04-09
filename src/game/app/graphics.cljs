@@ -36,7 +36,7 @@
                                                       false)
            branch-geometry (js/THREE.CylinderGeometry. 5
                                                        5
-                                                       (* (/ spacing 3) 2)
+                                                       (* (/ spacing 3) 2) ;;FIXME
                                                        12
                                                        false)
            trunk (js/THREE.Mesh. trunk-geometry tree-material)

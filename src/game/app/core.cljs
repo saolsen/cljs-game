@@ -2,7 +2,8 @@
   (:require [game.entities :as ent]
             [game.components :as comp]
             [game.systems :as sys])
-  (:use [game.systems.graphics :only [graphics-system]]
+  (:use [game.profiling :only [start-time! stop-time! initialize]]
+        [game.systems.graphics :only [graphics-system]]
         [game.systems.player :only [player-system
                                     camera-system
                                     controls-system
@@ -57,4 +58,5 @@
 
 ;; def it so you can dig in from the console
 (def app (create-app))
+(initialize)
 (start app)

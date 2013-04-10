@@ -6,7 +6,7 @@
 (defmacro profile
   "Wraps the body in the game.prifiling calls"
   [function-name & body]
-  `(let [profile# (~(symbol "start-time!") ~function-name)
+  `(let [profile# (start-time! ~function-name)
          result# ~@body]
      (~(symbol "stop-time!") profile#)
      result#))

@@ -3,8 +3,10 @@
             [game.components :as comp]
             [game.graphics :as graphics]
             [game.math :as math])
+  (:require-macros [game.macros.profiling :as p])
   (:use [game.systems :only [PSystem]]
-        [game.utils :only [log]]))
+        [game.utils :only [log]]
+        [game.profiling :only [start-time! stop-time!]]))
 
 ;; A system to handle player specific stuff.
 (defrecord PlayerSystem [setup?]
@@ -24,7 +26,8 @@
                        ;; Not sure what to render but need this component
                        ;; so that the graphics sytem gets this entity.
                        (comp/renderable (constantly nil)
-                                        (fn [a b] a))]})))
+                                        (fn [a b] a))]}))
+    )
   )
 
 (defn player-system [] (PlayerSystem. (atom false)))
@@ -69,6 +72,7 @@
   (components [_] #{:camera})
   (setup [_] nil)
   (run [_ globals ents]
+    (p/profile "camera"
     (let [[key comps] (first ents)]
       (when-let [cam (ent/get-component comps :camera)]
       
@@ -89,7 +93,7 @@
             (.addEventListener (js/getcanvas) "click" canvas-click false))
           (reset! setup? true))
         nil
-        )))
+        ))))
   )
 
 (defn camera-system [] (CameraSystem. (atom false) (atom false)))
@@ -142,7 +146,8 @@
           (reset! keys-pressed [])
           {key (conj (ent/remove-component comps :keypresses)
                      (comp/keypresses down pressed))})
-        ))))
+        )))
+  )
 
 (defn controls-system [] (ControlsSystem. (atom false)
                                           (atom [])

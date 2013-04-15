@@ -21,7 +21,6 @@
 (defrecord App [entities systems last-tick]
   PApp
   (start [_]
-    ;; Has to be top level for the animation callback
     (defn animation-loop [t]
       (.webkitRequestAnimationFrame js/window animation-loop)
       (let [time-delta (/ (- t @last-tick) 1000)

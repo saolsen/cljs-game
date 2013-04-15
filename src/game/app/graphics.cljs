@@ -1,6 +1,10 @@
 ;; Uses threejs
 (ns game.graphics)
 
+;; Really want a composable way to create things out of these
+;; primitives and have some declaritive ways to connect them so that I
+;; can easily create things to be generated.
+
 (defn cube
   "makes a cube at 10 10 10"
   []
@@ -63,6 +67,19 @@
        (.add container trunk)
        container))
   ([] (tree 60 80 60 25)))
+
+(defn owl
+  "Try to make an owl like nate designed."
+  []
+  (let [thigh-geom nil
+        leg-geom nil
+        neck-geom nil
+        head-geom nil
+        eye-geom nil
+        beak-geom nil
+        owleye-geom nil] nil))
+
+
 
 (defn setup-floor
   "creates a floor"

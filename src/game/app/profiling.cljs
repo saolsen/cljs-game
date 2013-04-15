@@ -38,7 +38,7 @@
                                 {:count 1 :avg length}))))]
       (swap! functions add-time name start time)
       (swap! open-executions dissoc id)))
-  (check-profiles [_] (pr-str @functions))
+  (check-profiles [_] (clj->js @functions))
 )
 
 (defn initialize [] (def *profiler* (Profiler. (atom 0) (atom {}) (atom {}))))

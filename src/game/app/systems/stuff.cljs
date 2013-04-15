@@ -45,6 +45,9 @@
        ;;                (partial graphics/tree 500 200 600 50)
        ;;                (fn [old ent] old))
        ;;               (comp/position 0 0 0)]
+
+
+       
        
        ;; antisun
        (ent/gen-id) [(comp/renderable

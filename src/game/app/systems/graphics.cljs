@@ -31,6 +31,8 @@
                 (swap! return
                        assoc
                        key
+                       ;;FIXME: can't use conj when I change the
+                       ;;entities implementation.
                        (conj comps (components/camera
                                     (:pitch-object cam)
                                     (:yaw-object cam)))))

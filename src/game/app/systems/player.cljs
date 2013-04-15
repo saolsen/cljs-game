@@ -5,8 +5,7 @@
             [game.math :as math])
   (:require-macros [game.macros.profiling :as p])
   (:use [game.systems :only [PSystem]]
-        [game.utils :only [log]]
-        [game.profiling :only [start-time! stop-time!]]))
+        [game.utils :only [log]]))
 
 ;; A system to handle player specific stuff.
 (defrecord PlayerSystem [setup?]
@@ -16,6 +15,7 @@
   (run [_ globals ents]
     ;; Set up player entity
     (when-not @setup?
+      (p/profile "setup player"
       (reset! setup? true)
       (let [cam-objects (graphics/camera-objects)]
         ;; base player entity, a camera gets added by the graphics system
@@ -26,7 +26,7 @@
                        ;; Not sure what to render but need this component
                        ;; so that the graphics sytem gets this entity.
                        (comp/renderable (constantly nil)
-                                        (fn [a b] a))]}))
+                                        (fn [a b] a))]})))
     )
   )
 
@@ -78,6 +78,7 @@
       
       ;; Set up on first pass
         (when-not @setup?
+          (p/profile "setup camera"
           (let [mouse-handler (partial on-mouse-move
                                  enabled?
                                  (:yaw-object cam)
@@ -91,7 +92,7 @@
                                pointer-handler false)
             ;; pointerlock
             (.addEventListener (js/getcanvas) "click" canvas-click false))
-          (reset! setup? true))
+          (reset! setup? true)))
         nil
         ))))
   )
@@ -131,21 +132,23 @@
       (when-let [cam (ent/get-component comps :keypresses)]
         ;; Set up
         (when-not @setup?
+          (p/profile "setup controls"
           (.addEventListener js/document "keydown"
                              (partial on-key-down keys-pressed keys-down)
                              false)
           (.addEventListener js/document "keyup"
                              (partial on-key-up keys-down))          
-          (reset! setup? true))
+          (reset! setup? true)))
 
         ;; Each step, set the keys that were pressed (and are down)
         ;; for this frame on the component so other systems can use
         ;; them.
+        (p/profile "handle controls"
         (let [down @keys-down
               pressed @keys-pressed]
           (reset! keys-pressed [])
           {key (conj (ent/remove-component comps :keypresses)
-                     (comp/keypresses down pressed))})
+                     (comp/keypresses down pressed))}))
         )))
   )
 
@@ -161,6 +164,7 @@
   (setup [_] nil)
   (run [_ globals ents]
     (when (seq ents)
+      (p/profile "handle keypresses"
       (let [[key comps] (first ents)
             keypresses (ent/get-component comps :keypresses)
             keys-down (:down keypresses)
@@ -179,7 +183,7 @@
         (when (contains? keys-down :d)
           (.translateX yaw-object (* delta player-speed)))
         ))
-    )
+    ))
   )
 
 (defn player-movement-system [] (PlayerMovementSystem.))

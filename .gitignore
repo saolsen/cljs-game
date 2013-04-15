@@ -1,3 +1,8 @@
+\#*#
+.\#*
 target
 test
 resources/public/js/game.js
+out
+repl
+.lein-repl-history

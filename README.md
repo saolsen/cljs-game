@@ -1,4 +1,6 @@
-A game about time travel
+A 3d game experiemnt
+
+You can play it here [http://cljs-game.herokuapp.com/]
 
 Was a second experiment in making a threejs game in clojurescript. I've mostly stopped working on it.
 
